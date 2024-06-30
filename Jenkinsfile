@@ -39,12 +39,12 @@ pipeline {
             steps {
                 script {
                     // Push backend Docker image
-                    docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials') {
+                    docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials1') {
                         docker.image("${DOCKER_REPO_BACKEND}:${BUILD_NUMBER}").push()
                     }
                     
                     // Push frontend Docker image
-                    docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials') {
+                    docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials1') {
                         docker.image("${DOCKER_REPO_FRONTEND}:${BUILD_NUMBER}").push()
                     }
                 }
