@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         // Define environment variables
-       // DOCKER_REGISTRY = 'docker.io'  // Replace with your Docker registry URL
+        DOCKER_REGISTRY = 'docker.io'  // Replace with your Docker registry URL
         DOCKER_REPO_BACKEND = 'akshaykamate/backend'
         DOCKER_REPO_FRONTEND = 'akshaykamate/frontend'
         KUBE_NAMESPACE = 'default'  // Replace with your Kubernetes namespace
@@ -35,27 +35,11 @@ pipeline {
             }
         }
         
-      //  stage('Push Docker Images') {
-        //    steps {
-           //     script {
-                    // Push backend Docker image
-           //         docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials1') {
-            //            docker.image("${DOCKER_REPO_BACKEND}:${BUILD_NUMBER}").push()
-            //        }
-                    
-                    // Push frontend Docker image
-              //      docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials1') {
-           //          docker.image("${DOCKER_REPO_FRONTEND}:${BUILD_NUMBER}").push()
-               //     }
-              //  }
-        //    }
-  //      }
-        
         stage('Deploy to Kubernetes') {
             steps {
                 script {
                     // Apply Kubernetes manifests
-                    withKubeConfig(credentialsId: 'kube-config', serverUrl: 'https://your-kubernetes-server-url') {
+                    withKubeConfig(credentialsId: 'kube-config', serverUrl: 'https://127.0.0.1:6443') {
                         sh "kubectl apply -f kubernetes/backend.yaml -n ${KUBE_NAMESPACE}"
                         sh "kubectl apply -f kubernetes/frontend.yaml -n ${KUBE_NAMESPACE}"
                     }
