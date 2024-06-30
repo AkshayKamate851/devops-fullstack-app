@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         // Define environment variables
-        DOCKER_REGISTRY = 'docker.io'  // Replace with your Docker registry URL
+       // DOCKER_REGISTRY = 'docker.io'  // Replace with your Docker registry URL
         DOCKER_REPO_BACKEND = 'akshaykamate/backend'
         DOCKER_REPO_FRONTEND = 'akshaykamate/frontend'
         KUBE_NAMESPACE = 'default'  // Replace with your Kubernetes namespace
@@ -35,21 +35,21 @@ pipeline {
             }
         }
         
-        stage('Push Docker Images') {
-            steps {
-                script {
+      //  stage('Push Docker Images') {
+        //    steps {
+           //     script {
                     // Push backend Docker image
-                    docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials1') {
-                        docker.image("${DOCKER_REPO_BACKEND}:${BUILD_NUMBER}").push()
-                    }
+           //         docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials1') {
+            //            docker.image("${DOCKER_REPO_BACKEND}:${BUILD_NUMBER}").push()
+            //        }
                     
                     // Push frontend Docker image
-                    docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials1') {
-                        docker.image("${DOCKER_REPO_FRONTEND}:${BUILD_NUMBER}").push()
-                    }
-                }
-            }
-        }
+              //      docker.withRegistry('https://your-docker-registry', 'docker-hub-credentials1') {
+           //          docker.image("${DOCKER_REPO_FRONTEND}:${BUILD_NUMBER}").push()
+               //     }
+              //  }
+        //    }
+  //      }
         
         stage('Deploy to Kubernetes') {
             steps {
