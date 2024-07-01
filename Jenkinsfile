@@ -51,17 +51,11 @@ pipeline {
         
         stage('Launch Application') {
             steps {
-                // Get the Kubernetes deployment URL
-                def deploymentUrl = sh(returnStdout: true, script: "kubectl get deployment -n ${KUBE_NAMESPACE} -o jsonpath='{.items[0].status.containerStatuses[0].containerID}'")
-                
-                // Wait for the deployment to be ready
-                sh "kubectl rollout status deployment -n ${KUBE_NAMESPACE} ${DOCKER_REPO_BACKEND} --timeout=300s"
-                
-                // Get the application URL
-                def appUrl = sh(returnStdout: true, script: "kubectl get svc -n ${KUBE_NAMESPACE} -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'")
-                
-                // Print the application URL
-                echo "Application launched at: http://${appUrl}"
+                script {
+                    def deploymentUrl = sh(returnStdout: true, script: "kubectl get deployment -n ${KUBE_NAMESPACE} -o jsonpath='{.items[0].status.containerStatuses[0].containerID}'")
+                    def appUrl = sh(returnStdout: true, script: "kubectl get svc -n ${KUBE_NAMESPACE} -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'")
+                    echo "Application launched at: http://${appUrl}"
+                }
             }
         }
     }
