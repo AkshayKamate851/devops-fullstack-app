@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     environment {
         // Define environment variables
         DOCKER_REGISTRY = 'docker.io'  // Replace with your Docker registry URL
@@ -9,7 +9,7 @@ pipeline {
         KUBE_NAMESPACE = 'default'  // Replace with your Kubernetes namespace
         KUBE_CLUSTER_URL = 'https://127.0.0.1:6443'
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
@@ -17,7 +17,7 @@ pipeline {
                 checkout scm
             }
         }
-        
+
         stage('Build Backend Docker Image') {
             steps {
                 script {
@@ -26,7 +26,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Build Frontend Docker Image') {
             steps {
                 script {
@@ -35,7 +35,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Deploy to Kubernetes') {
             steps {
                 kubernetes {
@@ -48,19 +48,24 @@ pipeline {
                 }
             }
         }
-        
-       stage('Launch Application') {
-    script {
-        def deploymentUrl = sh(returnStdout: true, script: """
-            kubectl --kubeconfig=~/.kube/config apply -f deployment.yaml
-            kubectl --kubeconfig=~/.kube/config rollout status deployment/my-app -n default
-            kubectl --kubeconfig=~/.kube/config get deployment/my-app -n default -o jsonpath='{.status.containerStatuses[0].containerID}'
-        """)
-        echo "Deployment URL: ${deploymentUrl}"
+
+        stage('Launch Application') {
+            steps {
+                script {
+                    // Apply deployment YAML file
+                    sh "kubectl --kubeconfig=~/.kube/config apply -f deployment.yaml"
+
+                    // Wait for deployment to rollout
+                    sh "kubectl --kubeconfig=~/.kube/config rollout status deployment/my-app -n default"
+
+                    // Get load balancer URL
+                    def loadBalancerUrl = sh(returnStdout: true, script: "kubectl --kubeconfig=~/.kube/config get svc my-app -n default -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'")
+                    echo "Application deployed at: http://${loadBalancerUrl}"
+                }
+            }
+        }
     }
-}
-    }
-    
+
     post {
         success {
             echo 'Deployment successful!'
