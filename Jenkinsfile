@@ -37,11 +37,12 @@ pipeline {
         
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    // Apply Kubernetes manifests
-                    withKubeConfig(credentialsId: 'kube-config', serverUrl: 'https://127.0.0.1:6443') {
-                        sh "kubectl apply -f kubernetes/backend.yaml -n ${KUBE_NAMESPACE}"
-                        sh "kubectl apply -f kubernetes/frontend.yaml -n ${KUBE_NAMESPACE}"
+                kubernetes {
+                    cloud 'My Kubernetes Cluster'  // Replace with your cloud name
+                    deploy {
+                        configs 'kubernetes/backend.yaml', 'kubernetes/frontend.yaml'
+                        enableConfigSubstitution true
+                        namespace "${KUBE_NAMESPACE}"
                     }
                 }
             }
