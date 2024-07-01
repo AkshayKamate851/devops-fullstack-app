@@ -49,15 +49,16 @@ pipeline {
             }
         }
         
-        stage('Launch Application') {
-            steps {
-                script {
-                    def deploymentUrl = sh(returnStdout: true, script: "kubectl get deployment -n ${KUBE_NAMESPACE} -o jsonpath='{.items[0].status.containerStatuses[0].containerID}'")
-                    def appUrl = sh(returnStdout: true, script: "kubectl get svc -n ${KUBE_NAMESPACE} -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}'")
-                    echo "Application launched at: http://${appUrl}"
-                }
-            }
-        }
+       stage('Launch Application') {
+    script {
+        def deploymentUrl = sh(returnStdout: true, script: """
+            kubectl --kubeconfig=~/.kube/config apply -f deployment.yaml
+            kubectl --kubeconfig=~/.kube/config rollout status deployment/my-app -n default
+            kubectl --kubeconfig=~/.kube/config get deployment/my-app -n default -o jsonpath='{.status.containerStatuses[0].containerID}'
+        """)
+        echo "Deployment URL: ${deploymentUrl}"
+    }
+}
     }
     
     post {
