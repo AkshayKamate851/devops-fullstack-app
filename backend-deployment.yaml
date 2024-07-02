@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: akshaykamate/backend:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: database-2.c10i8m2q0w9l.us-east-1.rds.amazonaws.com  # RDS instance endpoint
+        - name: DB_USER
+          value: postgres  # RDS master username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rds-db-password
+              key: password
+        - name: DB_NAME
+          value: database-2  # RDS database name
+        - name: DB_PORT
+          value: "5432"
