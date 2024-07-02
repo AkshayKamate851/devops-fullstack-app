@@ -41,7 +41,7 @@ pipeline {
                 kubernetes {
                     cloud 'k3s'  // Use k3s cloud provider
                     deploy {
-                        configs 'kubernetes/backend.yaml', 'kubernetes/frontend.yaml'
+                        configs 'backend-deployment.yaml', 'backend-service.yaml' , 'frontend-deployment.yaml' , 'frontend-service.yaml' 
                         enableConfigSubstitution true
                         namespace "${KUBE_NAMESPACE}"
                     }
