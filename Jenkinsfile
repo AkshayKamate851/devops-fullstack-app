@@ -48,22 +48,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Launch Application') {
-            steps {
-                script {
-                    // Apply deployment YAML file
-                    sh "kubectl --kubeconfig=~/.kube/config apply -f deployment.yaml"
-
-                    // Wait for deployment to rollout
-                    sh "kubectl --kubeconfig=~/.kube/config rollout status deployment/my-app -n default"
-
-                    // Get load balancer URL
-                    def loadBalancerUrl = sh(returnStdout: true, script: "kubectl --kubeconfig=~/.kube/config get svc my-app -n default -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'")
-                    echo "Application deployed at: http://${loadBalancerUrl}"
-                }
-            }
-        }
     }
 
     post {
