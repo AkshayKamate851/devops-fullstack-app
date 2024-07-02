@@ -1,9 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
-  labels:
-    app: frontend
+  name: frontend
 spec:
   replicas: 1
   selector:
@@ -14,24 +12,10 @@ spec:
       labels:
         app: frontend
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
-        - name: frontend
-          image: akshaykamate/frontend:latest
-          ports:
-            - containerPort: 8080
-          env:
-            - name: BACKEND_API_URL
-              value: "http://backend-service.default.svc.cluster.local:8080"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-service
-spec:
-  selector:
-    app: frontend
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
-  type: LoadBalancer
+      - name: frontend
+        image: akshaykamate/frontend:latest
+        ports:
+        - containerPort: 3000
